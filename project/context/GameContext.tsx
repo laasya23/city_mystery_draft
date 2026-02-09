@@ -92,22 +92,29 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
     const points = Math.max(10 - hintsUsed * 2, 1);
     const updatedCities = [...new Set([...userProgress.completed_cities, currentCity.id])];
-    const newProgress: Partial<UserProgress> = {
+
+    const updatedProgress: UserProgress = {
+      ...userProgress,
       completed_cities: updatedCities,
       total_points: userProgress.total_points + points,
       collection_count: updatedCities.length,
       current_streak: userProgress.current_streak + 1,
+      updated_at: new Date().toISOString(),
     };
 
-    try {
-      const { data } = await supabase
-        .from('user_progress')
-        .update(newProgress)
-        .eq('user_id', userProgress.user_id)
-        .select()
-        .single();
+    setUserProgress(updatedProgress);
 
-      if (data) setUserProgress(data);
+    try {
+      await supabase
+        .from('user_progress')
+        .update({
+          completed_cities: updatedCities,
+          total_points: updatedProgress.total_points,
+          collection_count: updatedCities.length,
+          current_streak: updatedProgress.current_streak,
+          updated_at: updatedProgress.updated_at,
+        })
+        .eq('user_id', userProgress.user_id);
     } catch (err) {
       console.error('Failed to record answer:', err);
     }

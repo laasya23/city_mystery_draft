@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useGame } from '@/context/GameContext';
 import { useState } from 'react';
@@ -87,9 +87,13 @@ export default function GameScreen() {
 
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         <View style={styles.imageSection}>
-          <View style={styles.imagePlaceholder}>
-            <Text style={styles.imageText}>🏙️</Text>
-          </View>
+          <Image
+            source={{
+              uri: currentCity.image_url || `https://source.unsplash.com/800x600/?${encodeURIComponent(currentCity.name)},city,landmark`,
+            }}
+            style={styles.cityImage}
+            resizeMode="cover"
+          />
         </View>
 
         <View style={styles.hintsContainer}>
@@ -196,17 +200,11 @@ const styles = StyleSheet.create({
   imageSection: {
     marginBottom: 24,
   },
-  imagePlaceholder: {
-    height: 160,
-    backgroundColor: '#e0e7ff',
+  cityImage: {
+    height: 200,
+    width: '100%',
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#c7d2fe',
-  },
-  imageText: {
-    fontSize: 64,
+    backgroundColor: '#e5e7eb',
   },
   hintsContainer: {
     marginBottom: 24,
